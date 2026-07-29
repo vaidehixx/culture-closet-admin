@@ -20,7 +20,7 @@ use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\SettingsController;
 
-Route::prefix('admin')->name('admin.')->middleware(['web', 'admin'])->group(function () {
+Route::domain('admin.culturecloset.site')->prefix('admin')->name('admin.')->middleware(['web', 'admin', 'is-admin'])->group(function () {
 
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');

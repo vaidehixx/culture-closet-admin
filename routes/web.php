@@ -3,17 +3,17 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminAuthController;
 
-// Landing page on bare domain
+// Landing page on public domain
 Route::domain('culturecloset.site')->group(function () {
     Route::get('/', fn () => view('landing'));
 });
 
-// Admin auth routes (reachable on any domain)
-Route::prefix('admin')->name('admin.')->group(function () {
+// Admin auth routes (admin subdomain)
+Route::domain('admin.culturecloset.site')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/login',  [AdminAuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
     Route::post('/logout',[AdminAuthController::class, 'logout'])->name('logout');
 });
 
-// Fallback: redirect root to admin login
+// Fallback for local dev / direct IP access
 Route::get('/', fn () => redirect()->route('admin.login'));
