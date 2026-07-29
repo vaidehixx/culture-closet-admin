@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan *)",
+      "Bash(/usr/bin/php artisan *)",
+      "Read(//opt/homebrew/bin/**)",
+      "Read(//usr/local/bin/**)",
+      "Bash(/opt/homebrew/bin/php artisan *)",
+      "Bash(/opt/homebrew/bin/php --version)",
+      "Bash(/opt/homebrew/bin/php -l /Users/vai/Desktop/culture-closet-admin2/app/Http/Controllers/Admin/ProductController.php)",
+      "Bash(xargs php -l)",
+      "Bash(PGPASSWORD=S9913958G psql -h db.cuevlsibgvvudludwzcv.supabase.co -U postgres -d postgres -c \"SELECT 1\")",
+      "Bash(sed -i '' 's|DB_HOST=db.cuevlsibgvvudludwzcv.supabase.co|DB_HOST=aws-1-ap-southeast-1.pooler.supabase.com|' /Users/vai/Desktop/culture-closet-admin2/.env)",
+      "Bash(sed -i '' 's|DB_PORT=5432|DB_PORT=6543|' /Users/vai/Desktop/culture-closet-admin2/.env)",
+      "Bash(sed -i '' 's|DB_USERNAME=postgres|DB_USERNAME=postgres.cuevlsibgvvudludwzcv|' /Users/vai/Desktop/culture-closet-admin2/.env)",
+      "Bash(php /tmp/test_supabase.php)",
+      "Bash(php -r ' *)"
+    ]
+  }
+}
