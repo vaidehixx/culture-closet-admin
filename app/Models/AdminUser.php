@@ -15,4 +15,9 @@ class AdminUser extends Authenticatable
     {
         return ['password' => 'hashed'];
     }
+
+    public function getIsAdminAttribute(): bool
+    {
+        return true;
+    }
 }
