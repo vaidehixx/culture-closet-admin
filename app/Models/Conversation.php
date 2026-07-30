@@ -12,5 +12,5 @@ class Conversation extends Model {
     public function user2() { return $this->belongsTo(User::class, 'user_b'); }
     public function product() { return $this->belongsTo(Product::class, 'listing_id'); }
     public function messages() { return $this->hasMany(Message::class); }
-    public function latestMessage() { return $this->hasOne(Message::class)->latestOfMany('created_at'); }
+    public function latestMessage() { return $this->hasOne(Message::class)->orderByDesc('created_at'); }
 }

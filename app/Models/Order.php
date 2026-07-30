@@ -10,12 +10,16 @@ class Order extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'renter_id', 'lender_id', 'listing_id', 'status',
+        'renter_id', 'lender_id', 'listing_id', 'rental_status',
         'start_date', 'end_date', 'total_amount', 'subtotal',
         'platform_fee_amount', 'service_fee_amount',
         'insurance_plan', 'insurance_fee', 'cleaning_fee',
         'stripe_payment_intent_id',
     ];
+
+    // Alias: views/controllers use ->status
+    public function getStatusAttribute(): ?string { return $this->rental_status; }
+    public function setStatusAttribute(string $value): void { $this->rental_status = $value; }
 
     protected $casts = [
         'start_date'  => 'date',

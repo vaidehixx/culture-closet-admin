@@ -13,29 +13,34 @@ class ReportController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Report::with(['reporter', 'reported', 'product'])->latest();
+        try {
+            $query = Report::with(['reporter', 'reported', 'product'])->latest();
 
-        $filter = $request->get('filter', 'open');
-        if ($filter !== 'all') {
-            $query->where('status', $filter);
+            $filter = $request->get('filter', 'open');
+            if ($filter !== 'all') {
+                $query->where('status', $filter);
+            }
+
+            if ($search = $request->get('search')) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('reported', fn($q) => $q->where('name', 'like', "%{$search}%"))
+                      ->orWhere('reason', 'like', "%{$search}%");
+                });
+            }
+
+            $reports = $query->paginate(20)->withQueryString();
+
+            $counts = [
+                'all'       => Report::count(),
+                'open'      => Report::where('status', 'open')->count(),
+                'reviewed'  => Report::where('status', 'reviewed')->count(),
+                'actioned'  => Report::where('status', 'actioned')->count(),
+                'dismissed' => Report::where('status', 'dismissed')->count(),
+            ];
+        } catch (\Exception $e) {
+            $reports = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 20);
+            $counts  = ['all' => 0, 'open' => 0, 'reviewed' => 0, 'actioned' => 0, 'dismissed' => 0];
         }
-
-        if ($search = $request->get('search')) {
-            $query->where(function ($q) use ($search) {
-                $q->whereHas('reported', fn($q) => $q->where('name', 'like', "%{$search}%"))
-                  ->orWhere('reason', 'like', "%{$search}%");
-            });
-        }
-
-        $reports = $query->paginate(20)->withQueryString();
-
-        $counts = [
-            'all'       => Report::count(),
-            'open'      => Report::where('status', 'open')->count(),
-            'reviewed'  => Report::where('status', 'reviewed')->count(),
-            'actioned'  => Report::where('status', 'actioned')->count(),
-            'dismissed' => Report::where('status', 'dismissed')->count(),
-        ];
 
         return view('reports.index', compact('reports', 'counts'));
     }

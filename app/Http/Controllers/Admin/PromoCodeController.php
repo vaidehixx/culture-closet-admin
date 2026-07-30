@@ -12,24 +12,29 @@ class PromoCodeController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = PromoCode::latest();
+        try {
+            $query = PromoCode::latest();
 
-        if ($search = $request->get('search')) {
-            $query->where('code', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+            if ($search = $request->get('search')) {
+                $query->where('code', 'like', "%{$search}%")
+                      ->orWhere('description', 'like', "%{$search}%");
+            }
+
+            $filter = $request->get('filter', 'all');
+            $query->when($filter === 'active',   fn($q) => $q->where('is_active', true))
+                  ->when($filter === 'inactive', fn($q) => $q->where('is_active', false));
+
+            $codes = $query->paginate(20)->withQueryString();
+
+            $counts = [
+                'all'      => PromoCode::count(),
+                'active'   => PromoCode::where('is_active', true)->count(),
+                'inactive' => PromoCode::where('is_active', false)->count(),
+            ];
+        } catch (\Exception $e) {
+            $codes  = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 20);
+            $counts = ['all' => 0, 'active' => 0, 'inactive' => 0];
         }
-
-        $filter = $request->get('filter', 'all');
-        $query->when($filter === 'active',   fn($q) => $q->where('is_active', true))
-              ->when($filter === 'inactive', fn($q) => $q->where('is_active', false));
-
-        $codes = $query->paginate(20)->withQueryString();
-
-        $counts = [
-            'all'      => PromoCode::count(),
-            'active'   => PromoCode::where('is_active', true)->count(),
-            'inactive' => PromoCode::where('is_active', false)->count(),
-        ];
 
         return view('promocodes.index', compact('codes', 'counts'));
     }

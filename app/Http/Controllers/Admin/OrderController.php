@@ -23,20 +23,20 @@ class OrderController extends Controller
 
         $status = $request->get('filter');
         if ($status && $status !== 'all') {
-            $query->where('status', $status);
+            $query->where('rental_status', $status);
         }
 
         $orders = $query->paginate(20)->withQueryString();
 
         $counts = [
             'all'                => Order::count(),
-            'pending_acceptance' => Order::where('status', 'pending_acceptance')->count(),
-            'confirmed'          => Order::where('status', 'confirmed')->count(),
-            'active'             => Order::where('status', 'active')->count(),
-            'returning'          => Order::where('status', 'returning')->count(),
-            'completed'          => Order::where('status', 'completed')->count(),
-            'disputed'           => Order::where('status', 'disputed')->count(),
-            'cancelled'          => Order::where('status', 'cancelled')->count(),
+            'pending_acceptance' => Order::where('rental_status', 'pending_acceptance')->count(),
+            'confirmed'          => Order::where('rental_status', 'confirmed')->count(),
+            'active'             => Order::where('rental_status', 'active')->count(),
+            'returning'          => Order::where('rental_status', 'returning')->count(),
+            'completed'          => Order::where('rental_status', 'completed')->count(),
+            'disputed'           => Order::where('rental_status', 'disputed')->count(),
+            'cancelled'          => Order::where('rental_status', 'cancelled')->count(),
         ];
 
         return view('orders.index', compact('orders', 'counts'));
@@ -50,13 +50,13 @@ class OrderController extends Controller
 
     public function resolve(Order $order): RedirectResponse
     {
-        $order->update(['status' => 'completed']);
+        $order->update(['rental_status' => 'completed']);
         return back()->with('success', "Rental #{$order->id} marked as completed.");
     }
 
     public function refund(Order $order): RedirectResponse
     {
-        $order->update(['status' => 'cancelled']);
+        $order->update(['rental_status' => 'cancelled']);
         return back()->with('success', "Rental #{$order->id} has been cancelled and refund initiated.");
     }
 }
